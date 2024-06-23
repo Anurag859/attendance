@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #e3f2fd, #90caf9);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        form {
+            position: relative;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(45deg, #fceabb, #f8b500);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s ease-out;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        form:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+        input {
+            width: 90%;
+            text-align: center;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        button,
+        input {
+            background: linear-gradient(45deg, #ff5722, #e91e63);
+            color: white;
+            padding: 14px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 20px;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input {
+            width: 90%;
+        }
+
+        button:hover,
+        input:hover {
+            background: linear-gradient(45deg, #e91e63, #ff5722);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                height: auto;
+                padding: 20px;
+            }
+
+            form {
+                width: 100%;
+                padding: 15px;
+            }
+
+            button,
+            input {
+                font-size: 14px;
+                padding: 12px 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <form>
+        <h1 style="color: #fff; margin-bottom: 20px;">Choose Desired Course</h1>
+        <div style="text-align: center;">
+            <button type="button" onclick="fetch_sheetValue('FYCS')">FYCS</button>
+            <button type="button" onclick="fetch_sheetValue('SYCS')">SYCS</button>
+            <button type="button" onclick="fetch_sheetValue('TYCS')">TYCS</button>
+            <input type="text" id="sheetValue" name="sheet_value" readonly>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <script>
+        function fetch_sheetValue(course) {
+            fetch(`/data?course=${course}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();  // Use .text() instead of .json()
+                })
+                .then(data => {
+                    document.getElementById('sheetValue').value = data; // Insert the fetched data into the input field
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(to right, #e3f2fd, #90caf9);
+      font-family: "Roboto", sans-serif;
+    }
+
+    input {
+      width: 90%;
+      text-align: center;
+    }
+
+    form {
+      position: relative;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(45deg, #fceabb, #f8b500);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.5s ease-out;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    form:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    button,
+    input {
+      background: linear-gradient(45deg, #ff5722, #e91e63);
+      color: white;
+      padding: 14px 20px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 20px;
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input {
+      width: 90%;
+    }
+
+    button:hover,
+    input:hover {
+      background: linear-gradient(45deg, #e91e63, #ff5722);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        height: auto;
+        padding: 20px;
+      }
+
+      form {
+        width: 100%;
+        padding: 15px;
+      }
+
+      button,
+      input {
+        font-size: 14px;
+        padding: 12px 18px;
+      }
+
+      .custom-alert {
+        width: 100%;
+        max-width: none;
+      }
+    }
+
+    .custom-alert {
+      display: none;
+      background-color: #f44336;
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      width: 90%;
+      max-width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.5s ease-out forwards;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: translate(-50%, -100%) scale(0.8);
+      }
+      to {
+        transform: translate(-50%, 0) scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <form id="course">
+    <h2 style="color: #fff; margin-bottom: 20px">Enter Google Spreadsheet ID</h2>
+    <div style="text-align: center">
+      <label for="FYCS">FYCS:</label>
+      <input type="text" id="FYCS" name="FYCS" /><br />
+      <label for="SYCS">SYCS:</label>
+      <input type="text" id="SYCS" name="SYCS" /><br />
+      <label for="TYCS">TYCS:</label>
+      <input type="text" id="TYCS" name="TYCS" /><br />
+      <button type="submit" name="save">Save</button>
+      <button type="button" onclick="redirect()">Next Page</button>
+    </div>
+  </form>
+  <div class="custom-alert" id="customAlert">
+    <p id="alertText"></p>
+  </div>
+
+  <script>
+    var form = document.getElementById('course');
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var saveButton = e.target.querySelector('button[name="save"]');
+      saveButton.innerHTML = "Saving...";
+      fetch('http://localhost:5000/submit', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          FYCS: form.FYCS.value,
+          SYCS: form.SYCS.value,
+          TYCS: form.TYCS.value
+        })
+      })
+        .then(response => response.text())
+        .then(data => {
+          saveButton.innerHTML = "Save";
+          showCustomAlert('Submitted successfully');
+        })
+        .catch(error => {
+          saveButton.innerHTML = "Save";
+          console.error('Error:', error);
+        });
+      form.reset();
+    });
+
+    function showCustomAlert(message) {
+      const alertBox = document.getElementById('customAlert');
+      const alertText = document.getElementById('alertText');
+      alertText.textContent = message;
+      alertBox.style.display = 'block';
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, 1800);
+    }
+
+    function redirect() {
+      window.location.href = "http://localhost:5001"; // Update with the actual URL of the next page
+    }
+  </script>
+</body>
+</html>
